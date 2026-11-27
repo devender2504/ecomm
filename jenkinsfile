@@ -8,7 +8,7 @@ pipeline {
             steps {
                 echo 'Building Docker Image'
 
-                sh 'sudo docker build -t ecomm:v1 -f dockerfile .'
+                sh 'docker build -t ecomm:v1 -f dockerfile .'
             }
         }
 
@@ -17,8 +17,8 @@ pipeline {
                 echo 'Deploying E-commerce Application'
 
                 sh '''
-                sudo docker stop ecomm || true
-                sudo docker rm ecomm || true
+                docker stop ecomm || true
+                docker rm ecomm || true
 
                 sudo docker run -d \
                 -p 8081:80 \
@@ -30,7 +30,7 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
-                sh 'sudo docker ps'
+                sh 'docker ps'
             }
         }
     }

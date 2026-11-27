@@ -1,23 +1,36 @@
+
 pipeline {
     agent any
 
     stages {
 
-        stage('Git Checkout') {
-            steps {
-                git 'https://github.com/devender2504/ecomm.git'
-            }
-        }
-
         stage('Docker Build') {
             steps {
-                sh 'sudo docker build -t ecommerce:v1 .'
+                echo 'Building Docker Image'
+
+                sh 'sudo docker build -t ecomm:v1 -f dockerfile .'
             }
         }
 
         stage('Docker Run') {
             steps {
-                sh 'sudo docker run -d -p 8081:80 --name ecommerce ecommerce:v1'
+                echo 'Deploying E-commerce Application'
+
+                sh '''
+                sudo docker stop ecomm || true
+                sudo docker rm ecomm || true
+
+                sudo docker run -d \
+                -p 8081:80 \
+                --name ecomm \
+                ecomm:v1
+                '''
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh 'sudo docker ps'
             }
         }
     }

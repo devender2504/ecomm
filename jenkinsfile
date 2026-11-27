@@ -11,24 +11,22 @@ pipeline {
                 sh 'docker build -t ecomm:v1 -f dockerfile .'
             }
         }
+stage('Docker Run') {
+    steps {
+        echo 'Deploying E-commerce Application'
 
-        stage('Docker Run') {
-            steps {
-                echo 'Deploying E-commerce Application'
+        sh '''
+        docker stop ecomm || true
+        docker rm ecomm || true
 
-                sh '''
-                docker stop ecomm || true
-                docker rm ecomm || true
-
-                sudo docker run -d \
-                -p 8081:80 \
-                --name ecomm \
-                ecomm:v1
-                '''
-            }
-        }
-
-        stage('Verify Deployment') {
+        docker run -d \
+        -p 8081:80 \
+        --name ecomm \
+        ecomm:v1
+        '''
+    }
+}
+stage('Verify Deployment') {
             steps {
                 sh 'docker ps'
             }
